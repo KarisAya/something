@@ -1,14 +1,20 @@
 import uvicorn
+
+import sys
 from pathlib import Path
 
-from lika.server import Server, RouterPath
-from lika.response import Response
+path = Path(r"D:/GIT/")
+
+for x in path.iterdir():
+    sys.path.insert(0, str(x.absolute()))
+
+from lika import Server, RoutePath, Response
 
 
 port = 8080
 server = Server()
 
-root = server.router_map
+root = server.route_map
 
 
 @root.router("/root")
@@ -28,7 +34,7 @@ async def _(scope, receive):
     if len(command) != 2:
         return Response(400)
     do, url = command
-    url = "src" + RouterPath(url)
+    url = "src" + RoutePath(url)
     if do == "del":
         parent = root.get_map(url[:-1])
         if parent and url[-1] in parent:
