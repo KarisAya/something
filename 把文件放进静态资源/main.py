@@ -1,48 +1,38 @@
 import uvicorn
-
-import sys
 from pathlib import Path
-
-path = Path(r"D:/GIT/")
-
-for x in path.iterdir():
-    sys.path.insert(0, str(x.absolute()))
-
 from lika import Server, RoutePath, Response
+from lika.router import RoutePathError
 
-
-port = 8080
 server = Server()
-
 root = server.route_map
-
-
-@root.router("/root")
-async def _(scope, receive):
-    print(root)
-    return Response(200)
 
 
 # 添加服务器位置
 @root.router("/command")
 async def _(scope, receive):
     if scope["client"][0] != "127.0.0.1":
-        return Response(401)
+        return Response(401, [(b"Content-type", b"text/plain")], [b"Permission denied"])
     request = await receive()
     command: str = request["body"].decode()
-    command = command.strip().split()
-    if len(command) != 2:
-        return Response(400)
-    do, url = command
-    url = "src" + RoutePath(url)
+    command_list = command.strip().split(maxsplit=2)
+    if len(command_list) != 2:
+        return Response(400, [(b"Content-type", b"text/plain")], [f"{command_list} is not a command".encode(encoding="utf-8")])
+    do, url = command_list
+    url = "sample" + RoutePath(url)
     if do == "del":
-        parent = root.get_map(url[:-1])
-        if parent and url[-1] in parent:
-            del parent[url[-1]]
+        try:
+            del root.find_route(url[:-1])[url[-1]]
             return Response(200)
-        return Response(418)
-    root.set_map(url).file_for_router(Path(do))
+        except RoutePathError | KeyError:
+            return Response(400, [(b"Content-type", b"text/plain")], [f"{url.url} are not exist"])
+    try:
+        path = Path(do)
+    except ValueError:
+        return Response(400, [(b"Content-type", b"text/plain")], [f"{do} are not a path"])
+    if not path.exists():
+        return Response(400, [(b"Content-type", b"text/plain")], [f"{do} are not exist"])
+    root.create_route(url).file_for_router(path)
     return Response(200)
 
 
-uvicorn.run(server, host="0.0.0.0", port=port)
+uvicorn.run(server, host="0.0.0.0", port=8080)
