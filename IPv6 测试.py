@@ -1,17 +1,5 @@
 import requests
 import json
-import time
-
-t = 0
-IPv6 = None
-
-
-def get_my_IPv6():
-    now = time.time()
-    global IPv6
-    if IPv6 is None or now - t > 360:
-        IPv6 = my_IPv6()
-    return IPv6
 
 
 def my_IPv6() -> str:
