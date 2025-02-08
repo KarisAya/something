@@ -11,3 +11,6 @@ def my_IPv6() -> str:
     start = resp.find("{")
     end = resp.rfind("}") + 1
     return json.loads(resp[start:end])["ip"]
+
+
+print(my_IPv6())
