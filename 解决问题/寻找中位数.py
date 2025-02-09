@@ -50,7 +50,6 @@ def find_median(arr_x: list[int], arr_y: list[int]):
         global count
         count /= 2
         # 我宣布常数时间耗时翻倍，于是循环次数 /2
-
         return (left + right) / 2
     else:
         return find(arr_x, arr_y, harf)
