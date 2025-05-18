@@ -24,13 +24,13 @@ async def _(scope, receive):
             del root.find_route(url[:-1])[url[-1]]
             return Response(200)
         except RoutePathError | KeyError:
-            return Response(400, [(b"Content-type", b"text/plain")], [f"{url.url} are not exist"])
+            return Response(400, [(b"Content-type", b"text/plain")], [f"{url.url} are not exist".encode()])
     try:
         path = Path(do)
     except ValueError:
-        return Response(400, [(b"Content-type", b"text/plain")], [f"{do} are not a path"])
+        return Response(400, [(b"Content-type", b"text/plain")], [f"{do} are not a path".encode()])
     if not path.exists():
-        return Response(400, [(b"Content-type", b"text/plain")], [f"{do} are not exist"])
+        return Response(400, [(b"Content-type", b"text/plain")], [f"{do} are not exist".encode()])
     root.create_route(url).file_for_router(path)
     return Response(200)
 
