@@ -13,5 +13,9 @@ dependencies = [
     "qrcode[pil] (>=8.2,<9.0)",
     "pyzbar (>=0.1.9,<0.2.0)",
     "pillow (>=11.2.1,<12.0.0)",
+    "websockets (>=15.0.1,<16.0.0)",
 
 ]
+
+[tool.poetry]
+package-mode = false
